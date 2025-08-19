@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wellness Report – Horizontal Card</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Keep the arc start at 12 o’clock for readability */
+    .rotate-start { transform: rotate(-90deg); transform-origin: 100px 100px; }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-2">
+
+  <!-- Horizontal, mobile-first card -->
+  <div class="w-[320px] bg-white rounded-xl shadow-md p-3 flex items-center gap-3">
+    
+    <!-- Gauge (left) -->
+    <div class="relative shrink-0">
+      <svg viewBox="0 0 200 200" class="w-24 h-24">
+        <defs>
+          <!-- Gradient: ~85% red/orange, ~15% green -->
+          <linearGradient id="bgGrad" x1="0%" y1="100%" x2="100%" y2="0%" gradientUnits="userSpaceOnUse">
+            <stop offset="0%"   stop-color="#EF4444"/>   <!-- deep red -->
+            <stop offset="40%"  stop-color="#EF4444"/>   <!-- hold red -->
+            <stop offset="70%"  stop-color="#F59E0B"/>   <!-- orange -->
+            <stop offset="85%"  stop-color="#F59E0B"/>   <!-- orange until 85% -->
+            <stop offset="100%" stop-color="#22C55E"/>   <!-- green for last 15% -->
+          </linearGradient>
+        </defs>
+
+        <!-- Full gradient ring -->
+        <circle id="bgArc" cx="100" cy="100" r="80"
+                class="rotate-start"
+                fill="none" stroke="url(#bgGrad)" stroke-width="16" />
+
+        <!-- Cover arc (progress mask) -->
+        <circle id="coverArc" cx="100" cy="100" r="80"
+                class="rotate-start"
+                fill="none" stroke="#FFFFFF" stroke-width="10"
+                stroke-linecap="round" />
+
+        <!-- Inner label (Bigger & bolder for visibility) -->
+        <text id="innerLabel" x="100" y="112" text-anchor="middle"
+              style="font:700 22px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; fill:#EF4444;">
+          43%
+        </text>
+      </svg>
+
+      <!-- subtle donut shadow -->
+      <div class="absolute inset-0 rounded-full blur-[6px]" style="box-shadow: 0 2px 8px rgba(0,0,0,.06);"></div>
+    </div>
+
+    <!-- Text (right) -->
+    <div class="flex-1 min-w-0">
+      <div class="flex items-start justify-between gap-1">
+        <div class="min-w-0">
+          <h2 class="text-[13px] font-semibold text-gray-900 leading-snug">Below Optimal Range</h2>
+          <p class="text-[11px] text-gray-600 truncate">Possible Low Testosterone</p>
+        </div>
+        <span id="pctLabel" class="text-[13px] font-semibold text-gray-600 shrink-0">43%</span>
+      </div>
+
+      <div class="mt-1">
+        <span class="inline-block px-2 py-0.5 rounded-md bg-red-100 text-red-600 text-[11px] font-semibold">
+          Needs Attention
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === CONFIG: set your percentage here ===
+    const percent = 43;
+
+    // === Gauge math ===
+    const r = 80;
+    const C = 2 * Math.PI * r;
+    const filled = C * (percent / 100);
+    const remaining = C - filled;
+
+    const coverArc = document.getElementById('coverArc');
+    coverArc.setAttribute('stroke-dasharray', `${remaining} ${filled}`);
+    coverArc.setAttribute('stroke-dashoffset', 0);
+
+    document.getElementById('pctLabel').textContent = `+${percent}%`;
+    document.getElementById('innerLabel').textContent = `${percent}%`;
+  </script>
+</body>
+</html>
